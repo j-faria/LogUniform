@@ -2,6 +2,11 @@
 
 A simple implementation of the log-uniform and modified log-uniform distributions.
 
+
+[![License MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/j-faria/LogUniform/blob/master/LICENSE)
+[![PyPI version](https://badge.fury.io/py/LogUniform.svg)](https://pypi.org/project/LogUniform/)
+
+
 How to use
 ----------
 
