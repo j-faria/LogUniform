@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from distutils.core import setup
+from setuptools import setup
 
 setup(name='LogUniform',
       version='1.0',
@@ -8,4 +8,6 @@ setup(name='LogUniform',
       author_email='joao.faria@astro.up.pt',
       url='https://github.com/j-faria/LogUniform',
       packages=['loguniform'],
+      setup_requires=['pytest-runner',],
+      tests_require=['pytest',],
      )
