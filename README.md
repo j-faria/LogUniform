@@ -44,6 +44,6 @@ the cumulative density function, and to get random samples from the distribution
 License
 -------
 
-Copyright 2018 João Faria and contributors.
+Copyright 2018 João Faria.
 
 LogUniform is free software made available under the MIT License. For details see the LICENSE file.
