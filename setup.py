@@ -8,6 +8,12 @@ setup(name='LogUniform',
       author_email='joao.faria@astro.up.pt',
       url='https://github.com/j-faria/LogUniform',
       packages=['loguniform'],
+      intall_requires=['numpy',]
       setup_requires=['pytest-runner',],
       tests_require=['pytest',],
+      classifiers=(
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ),
      )
