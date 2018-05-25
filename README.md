@@ -4,6 +4,7 @@ A simple implementation of the log-uniform and modified log-uniform distribution
 
 
 [![License MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/j-faria/LogUniform/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/j-faria/LogUniform.svg?branch=master)](https://travis-ci.org/j-faria/LogUniform)
 [![PyPI version](https://badge.fury.io/py/LogUniform.svg)](https://pypi.org/project/LogUniform/)
 
 
