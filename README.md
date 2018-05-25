@@ -21,9 +21,8 @@ and it's ready to use from Python
 ```python
 import loguniform
 ```
-    
-Documentation
--------------
+
+
 
 **LogUniform** comes with two simple classes, `LogUniform` and `ModifiedLogUniform`.  
 They are intended to mimic the API of `scipy.stats`
