@@ -4,7 +4,7 @@ LogUniform
 A simple implementation of the log-uniform and modified log-uniform
 distributions.
 
-|License MIT| |PyPI version|
+|License MIT| |Travis build| |PyPI version|
 
 How to use
 ----------
@@ -52,6 +52,8 @@ Copyright 2018 João Faria.
 details see the LICENSE_ file.
 
 .. _License: https://github.com/j-faria/LogUniform/blob/master/LICENSE
+.. |Travis build| image:: https://travis-ci.org/j-faria/LogUniform.svg?branch=master
+    :target: https://travis-ci.org/j-faria/LogUniform
 .. |License MIT| image:: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
    :target: https://github.com/j-faria/LogUniform/blob/master/LICENSE
 .. |PyPI version| image:: https://badge.fury.io/py/LogUniform.svg
