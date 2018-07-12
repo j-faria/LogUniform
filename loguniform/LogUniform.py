@@ -135,7 +135,7 @@ class LogUniform(dist):
         x = np.asarray(x)
         m = self._support_mask(x)
         with np.errstate(divide='ignore'):
-            return np.where(m, -np.log(x*np.log(self.q)), -np.inf)
+            return np.where(m, -np.log(x) - np.log(self.q), -np.inf)
 
     def cdf(self, x):
         x = np.asarray(x)
