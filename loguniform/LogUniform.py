@@ -15,7 +15,7 @@ class dist(ABC):
     @property
     @abstractmethod
     def a(self): pass
-    
+
     @property
     @abstractmethod
     def b(self): pass
@@ -27,18 +27,18 @@ class dist(ABC):
         return self.a <= x, x <= self.b
 
     @abstractmethod
-    def pdf(self, x): 
+    def pdf(self, x):
         """ Probability density function evaluated at x. """
         pass
 
     @abstractmethod
-    def cdf(self, x): 
+    def cdf(self, x):
         """ Cumulative density function evaluated at x. """
         pass
 
     @abstractmethod
-    def ppf(self, x): 
-        """ Percent point function (inverse of `cdf`) evaluated at q. """
+    def ppf(self, p):
+        """ Percent point function (inverse of `cdf`) evaluated at p. """
         pass
 
     def sf(self, x):
@@ -98,7 +98,7 @@ class LogUniform(dist):
     ----------
     a, b : float
            Lower and upper bounds of the distribution.
-    
+
     Methods
     -------
     pdf    : probability density function
@@ -130,7 +130,7 @@ class LogUniform(dist):
         m = self._support_mask(x)
         with np.errstate(divide='ignore'):
             return np.where(m, 1/(x*self.q), 0.)
-    
+
     def logpdf(self, x):
         x = np.asarray(x)
         m = self._support_mask(x)
@@ -141,34 +141,34 @@ class LogUniform(dist):
         x = np.asarray(x)
         m1, m2 = self._separate_support_mask(x)
         return np.where(m2, np.where(m1, np.log(x/self.a) / self.q, 0.), 1.)
-    
+
     def ppf(self, p):
         return np.exp(np.log(self.a) + p*(self.q))
 
     @property
     def mean(self):
         return (self.b - self.a) / self.q
-    
+
     @property
     def mode(self):
         return self.a
-    
+
     @property
     def var(self):
         a, b, q = self.a, self.b, self.q
         return (b-a)*(b*(q-2) + a*(q+2)) / (2*q**2)
-    
+
     @property
     def std(self):
         return np.sqrt(self.var)
-    
+
     @property
     def skewness(self):
         a, b, q = self.a, self.b, self.q
         f1 = np.sqrt(2) * (12*q*(a-b)**2 + q**2*(b**2*(2*q-9) + 2*a*b*q + a**2*(2*q+9)))
         f2 = 3*q*np.sqrt(b-a)*(b*(q-2)+a*(q+2))**(3/2)
         return f1/f2
-    
+
     @property
     def kurtosis(self):
         # see wikipedia.org/wiki/Kurtosis to understand the -3
@@ -192,7 +192,7 @@ class ModifiedLogUniform(dist):
            Point where the distribution changes from uniform to log-uniform.
     b    : float
            Upper bound of the distribution.
-    
+
     Methods
     -------
     pdf    : probability density function
@@ -218,7 +218,7 @@ class ModifiedLogUniform(dist):
 
         self.b = b
         self.knee = knee
-        
+
         self.q = np.log((self.b + self.knee) / self.knee)
 
     def pdf(self, x):
@@ -236,8 +236,8 @@ class ModifiedLogUniform(dist):
     def cdf(self, x):
         r = self.b / self.knee
         return np.log(x/self.knee + 1) / np.log(r + 1)
-    
-    def ppf(self, p, *args):
+
+    def ppf(self, p):
         return self.knee * (-1 + np.exp( np.log(self.b/self.knee + 1)*p ))
 
 
@@ -258,7 +258,7 @@ class ModifiedLogUniform(dist):
                 + 2*knee**2*np.log(knee+b) \
                 + (4*knee*np.log(knee+b) - 4*knee*np.log(knee)-4*b)*mu \
                 + (2*np.log(knee+b)-2*np.log(knee))*mu**2)/(2*q)
-    
+
     @property
     def std(self):
         return np.sqrt(self.var)
