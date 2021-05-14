@@ -35,18 +35,17 @@ the two implementations are compatible).
 
 both distributions ``d1`` and ``d2`` now have methods
 
--  ``pdf(x)`` and ``logpdf(x)``
--  ``cdf(x)``
--  ``rvs(size)``
+-  ``pdf(x)`` and ``logpdf(x)``: the probability density function and its logarithm
+-  ``cdf(x)``: cumulative density function
+-  ``ppf(x)``: percent point function (inverse of cdf)
+-  ``rvs(size)``: draw random samples from the distribution
+-  ``support()``: support of the distribution
 
-to calculate the probability density function (and its logarithm), the
-cumulative density function, and to get random samples from the
-distribution.
 
 License
 -------
 
-Copyright 2018 João Faria.
+Copyright 2021 João Faria.
 
 **LogUniform** is free software made available under the MIT License. For
 details see the LICENSE_ file.
