@@ -2,30 +2,40 @@ import numpy as np
 from abc import ABC, abstractmethod
 
 # the "Jeffreys" or log-uniform prior is already implemented in scipy
-# as the reciprocal distribution.
+# as the 'reciprocal' distribution (and, in newer versions, as 'loguniform').
+
+
+def _array_or_float(x):
+    if x.ndim == 0:
+        return x[()]
+    return x
 
 
 class dist(ABC):
-    """ 
+    """
     A simple distribution class. Requires the implementation of properties `a`
     and `b`, representing the bounds of the distribution, and methods `pdf`,
-    `cdf` for the probability and cumulative density functions and `ppf` for the
-    inverse of `cdf`.
+    `cdf` for the probability and cumulative density functions and `ppf` for
+    the inverse of `cdf`.
     """
 
     @property
     @abstractmethod
-    def a(self): pass
+    def a(self):
+        pass
 
     @property
     @abstractmethod
-    def b(self): pass
+    def b(self):
+        pass
 
     def _support_mask(self, x):
-        return (self.a <= x) & (x <= self.b)
+        # where x is inside the support
+        return np.asarray((self.a <= x) & (x <= self.b))
 
     def _separate_support_mask(self, x):
-        return self.a <= x, x <= self.b
+        # where x is inside the support, separate for lower and upper bounds
+        return np.asarray(self.a <= x), np.asarray(x <= self.b)
 
     @abstractmethod
     def pdf(self, x):
@@ -133,22 +143,37 @@ class LogUniform(dist):
     def pdf(self, x):
         x = np.asarray(x)
         m = self._support_mask(x)
-        with np.errstate(divide='ignore'):
-            return np.where(m, 1 / (x * self.q), 0.)
+        p = np.zeros_like(x, dtype=np.float64)
+        p[m] = 1 / (x[m] * self.q)
+        return _array_or_float(p)
 
     def logpdf(self, x):
         x = np.asarray(x)
         m = self._support_mask(x)
-        with np.errstate(divide='ignore'):
-            return np.where(m, -np.log(x) - np.log(self.q), -np.inf)
+        logp = np.full_like(x, -np.inf, dtype=np.float64)
+        logp[m] = -np.log(x[m]) - np.log(self.q)
+        return _array_or_float(logp)
 
     def cdf(self, x):
         x = np.asarray(x)
-        m1, m2 = self._separate_support_mask(x)
-        return np.where(m2, np.where(m1, np.log(x / self.a) / self.q, 0.), 1.)
+        _, m2 = self._separate_support_mask(x)
+        # cdf = 0.0
+        c = np.zeros_like(x, dtype=np.float64)
+        # for values above upper limit, cdf = 1.0
+        c[~m2] = 1.0
+        # otherwise, calculate
+        m = self._support_mask(x)
+        c[m] = np.log(x[m] / self.a) / self.q
+        return _array_or_float(c)
 
     def ppf(self, p):
-        return np.exp(np.log(self.a) + p * (self.q))
+        p = np.asarray(p)
+        # ppf = nan
+        v = np.full_like(p, np.nan, dtype=np.float64)
+        # for probabilities >=0 and <=1, calculate
+        m = (p >= 0.0) & (p <= 1.0)
+        v[m] = np.exp(np.log(self.a) + p[m] * (self.q))
+        return _array_or_float(v)
 
     @property
     def mean(self):
@@ -230,27 +255,43 @@ class ModifiedLogUniform(dist):
     def pdf(self, x):
         x = np.asarray(x)
         m = self._support_mask(x)
-        with np.errstate(divide='ignore'):
-            return np.where(m, 1/( (x+self.knee) * self.q ), 0.)
+        p = np.zeros_like(x, dtype=np.float64)
+        p[m] = 1 / ((x[m] + self.knee) * self.q)
+        return _array_or_float(p)
 
     def logpdf(self, x):
         x = np.asarray(x)
         m = self._support_mask(x)
-        with np.errstate(divide='ignore'):
-            return np.where(m, -np.log(x+self.knee) - np.log(self.q), -np.inf)
+        logp = np.full_like(x, -np.inf, dtype=np.float64)
+        logp[m] = -np.log(x[m] + self.knee) - np.log(self.q)
+        return _array_or_float(logp)
 
     def cdf(self, x):
+        x = np.asarray(x)
+        _, m2 = self._separate_support_mask(x)
+        # cdf = 0.0
+        c = np.zeros_like(x, dtype=np.float64)
+        # for values above upper limit, cdf = 1.0
+        c[~m2] = 1.0
+        # otherwise, calculate
+        m = self._support_mask(x)
         r = self.b / self.knee
-        return np.log(x/self.knee + 1) / np.log(r + 1)
+        c[m] = np.log(x[m] / self.knee + 1) / np.log(r + 1)
+        return _array_or_float(c)
 
     def ppf(self, p):
-        return self.knee * (-1 + np.exp( np.log(self.b/self.knee + 1)*p ))
-
+        p = np.asarray(p)
+        # ppf = nan
+        v = np.full_like(p, np.nan, dtype=np.float64)
+        # for probabilities >=0 and <=1, calculate
+        m = (p >= 0.0) & (p <= 1.0)
+        v[m] = self.knee * (-1 + np.exp(np.log(self.b / self.knee + 1) * p[m]))
+        return _array_or_float(v)
 
     @property
     def mean(self):
         b, knee, q = self.b, self.knee, self.q
-        return (b+knee*np.log(knee)-knee*np.log(knee+b)) / q
+        return (b + knee * np.log(knee) - knee * np.log(knee + b)) / q
 
     @property
     def mode(self):
@@ -260,10 +301,10 @@ class ModifiedLogUniform(dist):
     def var(self):
         b, knee, q = self.b, self.knee, self.q
         mu = self.mean
-        return (b**2 - 2*b*knee - 2*knee**2*np.log(knee) \
-                + 2*knee**2*np.log(knee+b) \
-                + (4*knee*np.log(knee+b) - 4*knee*np.log(knee)-4*b)*mu \
-                + (2*np.log(knee+b)-2*np.log(knee))*mu**2)/(2*q)
+        return (b**2 - 2*b*knee - 2*knee**2*np.log(knee) 
+                + 2*knee**2*np.log(knee+b) + (4*knee*np.log(knee+b)
+                - 4*knee*np.log(knee)-4*b)*mu 
+                + (2*np.log(knee+b)-2*np.log(knee))*mu**2) / (2*q)
 
     @property
     def std(self):
