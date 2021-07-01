@@ -3,6 +3,7 @@ from unittest import TestCase
 import loguniform
 dist = loguniform.ModifiedLogUniform
 
+
 class test_constructor(TestCase):
     def test1(self):
         with self.assertRaises(TypeError):
@@ -39,13 +40,13 @@ class test_methods(TestCase):
     def test_pdf(self):
 
         d = dist(knee=10, b=5000)
-        self.assertEqual(d.pdf(6000), 0)
-        
-        self.assertNotEqual(d.pdf(d.a), 0)
-        self.assertGreater(d.pdf(d.a), 0)
-        
-        self.assertGreater(d.pdf(d.knee), 0)
-        self.assertEqual(d.pdf(-1), 0)
+        self.assertEqual(d.pdf(6000), 0.0)
 
-        self.assertNotEqual(d.pdf(d.b), 0)
-        self.assertGreater(d.pdf(d.b), 0)
+        self.assertNotEqual(d.pdf(d.a), 0.0)
+        self.assertGreater(d.pdf(d.a), 0.0)
+
+        self.assertGreater(d.pdf(d.knee), 0.0)
+        self.assertEqual(d.pdf(-1), 0.0)
+
+        self.assertNotEqual(d.pdf(d.b), 0.0)
+        self.assertGreater(d.pdf(d.b), 0.0)

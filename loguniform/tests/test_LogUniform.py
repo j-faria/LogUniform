@@ -3,6 +3,7 @@ from unittest import TestCase
 import loguniform
 dist = loguniform.LogUniform
 
+
 class test_constructor(TestCase):
     def test1(self):
         with self.assertRaises(TypeError):
@@ -42,19 +43,19 @@ class test_methods(TestCase):
             b = a + randint(1, 1000)
             d = dist(a, b)
 
-            for _ in range(10):
+            for _ in range(100):
                 x = uniform(a, b)
-                self.assertAlmostEqual(float(d.pdf(x)), reciprocal(a, b).pdf(x))
+                self.assertAlmostEqual(d.pdf(x), reciprocal(a, b).pdf(x))
 
         except ImportError:
-            pass # ok, no luck checking things with scipy...
+            pass  # ok, no luck checking things with scipy...
 
         d = dist(a=10, b=5000)
-        self.assertEqual(d.pdf(0), 0)
-        self.assertEqual(d.pdf(6000), 0)
-        
-        self.assertNotEqual(d.pdf(d.a), 0)
-        self.assertGreater(d.pdf(d.a), 0)
+        self.assertEqual(d.pdf(0), 0.0)
+        self.assertEqual(d.pdf(6000), 0.0)
 
-        self.assertNotEqual(d.pdf(d.b), 0)
-        self.assertGreater(d.pdf(d.b), 0)
+        self.assertNotEqual(d.pdf(d.a), 0.0)
+        self.assertGreater(d.pdf(d.a), 0.0)
+
+        self.assertNotEqual(d.pdf(d.b), 0.0)
+        self.assertGreater(d.pdf(d.b), 0.0)
