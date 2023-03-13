@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-import loguniform
-dist = loguniform.ModifiedLogUniform
+from numpy import isscalar
+from loguniform import ModifiedLogUniform as dist
 
 
 class test_constructor(TestCase):
@@ -50,3 +50,13 @@ class test_methods(TestCase):
 
         self.assertNotEqual(d.pdf(d.b), 0.0)
         self.assertGreater(d.pdf(d.b), 0.0)
+
+    def test_rvs(self):
+        d = dist(knee=1, b=10)
+        self.assertTrue(isscalar(d.rvs()))
+        self.assertGreaterEqual(d.rvs(), 0.0)
+        self.assertLessEqual(d.rvs(), 10.0)
+
+        self.assertTrue(d.rvs(25).size == 25)
+        self.assertTrue((d.rvs(25) >= 0.0).all())
+        self.assertTrue((d.rvs(25) <= 10.0).all())

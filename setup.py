@@ -2,7 +2,7 @@
 from setuptools import setup
 
 setup(name='LogUniform',
-      version='2.0.0',
+      version='2.0.1',
       description='Implementation of the log-uniform and modified log-uniform distributions',
       long_description=open('README.rst').read(),
       author='João Faria',

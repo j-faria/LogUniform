@@ -71,7 +71,7 @@ class dist(ABC):
         """
         u = np.random.uniform(size=size)
         s = self.ppf(u)
-        return np.asscalar(s) if size == 1 else s
+        return s.item() if size == 1 else s
 
     def support(self):
         return self.a, self.b
