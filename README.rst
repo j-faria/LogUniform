@@ -45,7 +45,7 @@ both distributions ``d1`` and ``d2`` now have methods
 License
 -------
 
-Copyright 2021 João Faria.
+Copyright 2021-2023 João Faria.
 
 **LogUniform** is free software made available under the MIT License. For
 details see the LICENSE_ file.
